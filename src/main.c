@@ -76,7 +76,7 @@ static void hotkey_apply(int id, UINT mod, UINT vk)
     hotkey_format(mod, vk, k->text);
     /* the two for text only while there is a module to read it: without one they would take keys for nothing.
      * None while they step aside for the program in front: its own keys reach it. */
-    bool wanted = vk && (id < HK_OCR || ocr_there);
+    bool wanted = vk && ((id != HK_OCR && id != HK_OCRCOPY) || ocr_there);
     k->ok = !wanted || D.aside || RegisterHotKey(D.hwnd, id, mod | MOD_NOREPEAT, vk);
 }
 
@@ -286,7 +286,7 @@ static bool resolve_path(const WCHAR *cwd, const WCHAR *file, WCHAR *out, int ca
 /* the options that set a hotkey, by HK_*, and the NULL that ends a list for args_valid */
 static const WCHAR *kHkOpts[HK_COUNT + 1] = {NULL,           L"--hotkey",        L"--quick-hotkey",
                                              L"--pin-hotkey", L"--toggle-hotkey", L"--ocr-hotkey",
-                                             L"--ocr-copy-hotkey"};
+                                             L"--ocr-copy-hotkey", L"--pin-list-hotkey", L"--pin-undo-hotkey"};
 
 static bool start_opts_parse(int argc, WCHAR **argv, StartOpts *so, Str *err)
 {
@@ -333,7 +333,8 @@ static void status_text(Str *out)
     str_addf(out, T(ST_RUNNING), SNIPLITE_VERSION, GetCurrentProcessId());
     for (int id = 1; id < HK_COUNT; id++) {
         const Hotkey *k = &D.hk[id];
-        add_label(out, g_tr[S_ST_HK_CAPTURE + id - 1]);
+        add_label(out, id == HK_PIN_LIST ? T(P_GLOBAL_LIST) : id == HK_PIN_UNDO ? T(P_GLOBAL_UNDO)
+                                                                               : g_tr[S_ST_HK_CAPTURE + id - 1]);
         str_addf(out, L"%s%s\n", k->vk ? k->text : T(UNSET), k->ok ? L"" : T(ST_HK_FAILED));
     }
     const WCHAR *b = shot_backend();
@@ -356,7 +357,8 @@ static void status_text(Str *out)
 
 static void status_json(Str *out)
 {
-    static const WCHAR *keys[HK_COUNT] = {NULL, L"capture", L"quick", L"pin", L"toggle_pins", L"ocr", L"ocr_copy"};
+    static const WCHAR *keys[HK_COUNT] = {NULL, L"capture", L"quick", L"pin", L"toggle_pins", L"ocr", L"ocr_copy",
+                                         L"pin_list", L"pin_undo"};
     str_addf(out, L"{\"running\":true,\"version\":\"%s\",\"pid\":%lu,\"backend\":\"%s\",\"capturing\":%s,\"pins\":%d,",
              SNIPLITE_VERSION, GetCurrentProcessId(), shot_backend(), ov_active() ? L"true" : L"false", pin_count());
     str_add(out, L"\"hotkeys\":{");
@@ -478,7 +480,7 @@ static void apply_config(const Config *c, bool force_keys)
     for (int id = 1; id < HK_COUNT; id++)
         if (force_keys || c->mod[id] != D.hk[id].mod || c->vk[id] != D.hk[id].vk || !D.hk[id].ok)
             hotkey_apply(id, c->mod[id], c->vk[id]);
-    pin_top_all(c->pin_top);
+    pin_configure(c);
     if (c->gdi && gpu_enabled())
         gpu_stop();
     else if (!c->gdi && !gpu_enabled())
@@ -827,7 +829,8 @@ static int cmd_run(int argc, WCHAR **argv, const WCHAR *cwd, Str *out)
         if (arg_eq(c, L"_reload"))
             reload();
         for (int id = 1; id < HK_COUNT; id++) /* 1 registered or stepping aside, 0 failed, 2 none */
-            str_addf(out, L"%d ", !D.hk[id].vk || (id >= HK_OCR && !ocr_there) ? 2 : D.hk[id].ok ? 1 : 0);
+            str_addf(out, L"%d ", !D.hk[id].vk || ((id == HK_OCR || id == HK_OCRCOPY) && !ocr_there)
+                                         ? 2 : D.hk[id].ok ? 1 : 0);
         return EXIT_OK;
     }
     if (arg_eq(c, L"_update")) { /* from `--update-check` */
@@ -840,10 +843,9 @@ static int cmd_run(int argc, WCHAR **argv, const WCHAR *cwd, Str *out)
         long_cancel();
         return EXIT_OK;
     }
-    /* sniplite was started while it runs (_again), or `settings`; `settings update`, `settings ocr`,
-     * `settings about`: on that tab */
+    /* sniplite was started while it runs (_again), or `settings` with an optional tab name. */
     if (arg_eq(c, L"_again") || arg_eq(c, L"settings")) {
-        static const WCHAR *pages[] = {L"update", L"ocr", L"about"};
+        static const WCHAR *pages[] = {L"update", L"ocr", L"about", L"pins"};
         const WCHAR *page = NULL;
         for (int i = 0; argc > 1 && i < COUNTOF(pages); i++)
             if (arg_eq(argv[1], pages[i]))
@@ -1224,6 +1226,7 @@ static void tray_menu(POINT at)
     AppendMenuW(m, MF_SEPARATOR, 0, NULL);
     menu_item(m, TM_TOGGLE, pins && !pin_any_visible() ? T(M_SHOW_PINS) : T(M_HIDE_PINS), HK_TOGGLE, pins);
     menu_item(m, TM_CLOSE_PINS, T(M_CLOSE_PINS), 0, pins);
+    PinMenus pin_menus = pin_menus_add(m);
     AppendMenuW(m, MF_SEPARATOR, 0, NULL);
     menu_item(m, TM_SETTINGS, T(M_SETTINGS), 0, true);
     menu_item(m, TM_HELP, T(M_HELP), 0, true);
@@ -1237,7 +1240,11 @@ static void tray_menu(POINT at)
     int cmd = TrackPopupMenu(m, TPM_RETURNCMD | TPM_NONOTIFY | TPM_RIGHTBUTTON | align | TPM_BOTTOMALIGN, at.x, at.y,
                              0, D.hwnd, NULL);
     PostMessageW(D.hwnd, WM_NULL, 0, 0);
+    bool managed = pin_menus_run(pin_menus, (UINT)cmd);
+    pin_menus_dispose(pin_menus);
     DestroyMenu(m);
+    if (managed)
+        return;
     switch (cmd) {
     case TM_CAPTURE: /* let the menu's fade-out finish so it is not in the screenshot */
         SetTimer(D.hwnd, TIMER_MENU_CAPTURE, 200, NULL);
@@ -1336,6 +1343,12 @@ static LRESULT CALLBACK daemon_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
                 pin_clipboard();
         } else if (wp == HK_TOGGLE) {
             pin_toggle_all();
+        } else if (wp == HK_PIN_LIST) {
+            if (!ov_active())
+                pin_list_menu();
+        } else if (wp == HK_PIN_UNDO) {
+            if (!ov_active())
+                pin_restore_last();
         } else if (wp == HK_OCR || wp == HK_OCRCOPY) {
             ocr_capture(wp == HK_OCRCOPY);
         }
@@ -1353,9 +1366,13 @@ static LRESULT CALLBACK daemon_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         if (D.cfg.block_fullscreen) /* a game that takes its screen often changes the display mode */
             front_check(NULL);
         return 0;
+    case WM_ENDSESSION:
+        if (wp)
+            pin_flush_session();
+        return 0;
     case WM_CLOSE:
         ov_cancel();
-        pin_close_all();
+        pin_shutdown();
         ipc_close(ipc_find_dialog(SHORTCUTS_MARK)); /* its windows go with it */
         ipc_close(ipc_find_dialog(SETTINGS_MARK));
         tray_remove();
@@ -1461,6 +1478,7 @@ static int daemon_main(HINSTANCE inst, int argc, WCHAR **argv, bool from_cli)
     if (so.backend)
         c.gdi = so.backend == 2;
     apply_config(&c, true);
+    pin_start_session();
 
     if (!from_cli && !hotkeys_ok()) {
         Str msg = {0};

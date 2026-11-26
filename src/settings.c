@@ -1,5 +1,4 @@
-/* Preferences window: six tabs (general, capture, hotkeys, update, text recognition,
- * about); changes apply immediately.
+/* Preferences window: changes apply immediately.
  *
  * Every change is written to sniplite.ini and the background process is told to
  * reload it (`_reload`), which also reports whether each hotkey could be
@@ -29,6 +28,7 @@ typedef HRESULT(WINAPI *PFN_EnableThemeDialogTexture)(HWND, DWORD);
 typedef HRESULT(WINAPI *PFN_DrawThemeParentBackground)(HWND, HDC, const RECT *);
 
 #define HKM_SETKEY (WM_USER + 10) /* wParam = modifiers, lParam = vk */
+#define HK_STYLE_LOCAL 1          /* a focused pin can use unmodified letters and arrows */
 #define HKN_BEGIN 1               /* field notifications (WM_COMMAND high word) */
 #define HKN_DONE 2
 #define ETDT_ENABLETAB_ 6
@@ -42,7 +42,7 @@ typedef HRESULT(WINAPI *PFN_DrawThemeParentBackground)(HWND, HDC, const RECT *);
 #define WM_APP_OCR_DONE (WM_APP + 26)     /* wParam = OCR_GET_... */
 #define WM_APP_SAVE_FAILED (WM_APP + 27)  /* sniplite.ini could not be written */
 
-enum { PG_GENERAL, PG_CAPTURE, PG_HOTKEYS, PG_UPDATE, PG_OCR, PG_ABOUT, PG_COUNT };
+enum { PG_GENERAL, PG_CAPTURE, PG_HOTKEYS, PG_PINS, PG_UPDATE, PG_OCR, PG_ABOUT, PG_COUNT };
 enum { RI_NONE, RI_CLEAR, RI_OK, RI_FAIL, RI_HELP }; /* round icons */
 
 static struct {
@@ -84,8 +84,9 @@ static void daemon_cmd(const WCHAR *a, const WCHAR *b)
             if (*p >= L'0' && *p <= L'2')
                 S.state[id] = *p++ - L'0';
         }
-        for (int id = 1; id < HK_COUNT; id++)
+        for (int id = 1; id <= HK_OCRCOPY; id++)
             InvalidateRect(GetDlgItem(S.page[PG_HOTKEYS], IDC_HK_STATE1 + id - 1), NULL, FALSE);
+        InvalidateRect(GetDlgItem(S.page[PG_PINS], IDC_P_STATE), NULL, FALSE);
     }
     str_free(&r);
 }
@@ -306,7 +307,8 @@ static LRESULT CALLBACK hk_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         }
         WCHAR name[40];
         hotkey_format(0, vk, name); /* empty for a key the settings file has no name for */
-        if ((!mods && !ok_without_modifier(vk)) || !name[0]) { /* a lone letter would hijack typing */
+        bool local = (GetWindowLongW(h, GWL_STYLE) & HK_STYLE_LOCAL) != 0;
+        if ((!local && !mods && !ok_without_modifier(vk)) || !name[0] || (local && vk == VK_ESCAPE)) {
             MessageBeep(MB_OK);
             return 0;
         }
@@ -463,8 +465,98 @@ static bool pick_path(HWND owner, WCHAR *out, int cap, bool program)
 
 static void show_hotkeys(void)
 {
-    for (int id = 1; id < HK_COUNT; id++)
+    for (int id = 1; id <= HK_OCRCOPY; id++)
         SendDlgItemMessageW(S.page[PG_HOTKEYS], IDC_HK_FIELD1 + id - 1, HKM_SETKEY, S.cfg.mod[id], S.cfg.vk[id]);
+}
+
+static int pin_key_choice(HWND page)
+{
+    return (int)SendDlgItemMessageW(page, IDC_P_ACTION, CB_GETCURSEL, 0, 0);
+}
+
+static void show_pin_key(HWND page)
+{
+    int i = pin_key_choice(page);
+    if (i < 0)
+        return;
+    HWND field = GetDlgItem(page, IDC_P_KEY);
+    bool local = i < PK_COUNT;
+    int hk = HK_PIN_LIST + i - PK_COUNT;
+    KeyBinding k = local ? S.cfg.pins.key[i] : (KeyBinding){S.cfg.mod[hk], S.cfg.vk[hk]};
+    LONG style = GetWindowLongW(field, GWL_STYLE);
+    SetWindowLongW(field, GWL_STYLE, local ? style | HK_STYLE_LOCAL : style & ~HK_STYLE_LOCAL);
+    SendMessageW(field, HKM_SETKEY, k.mod, k.vk);
+    InvalidateRect(GetDlgItem(page, IDC_P_STATE), NULL, FALSE);
+}
+
+static void show_pin_prefs(HWND page)
+{
+    const PinPrefs *p = &S.cfg.pins;
+    CheckDlgButton(page, IDC_P_RESTORE, p->restore_session ? BST_CHECKED : BST_UNCHECKED);
+    CheckDlgButton(page, IDC_P_DOUBLE, p->compact_on_double_click ? BST_CHECKED : BST_UNCHECKED);
+    CheckDlgButton(page, IDC_P_INACTIVE_BORDER, p->inactive_outline ? BST_CHECKED : BST_UNCHECKED);
+    SetDlgItemInt(page, IDC_P_TRASH, p->trash_limit, FALSE);
+    SetDlgItemInt(page, IDC_P_INACTIVE, p->inactive, FALSE);
+    SetDlgItemInt(page, IDC_P_HOVER, p->hover, FALSE);
+    show_pin_key(page);
+}
+
+static void set_pin_key(HWND page, KeyBinding key)
+{
+    int i = pin_key_choice(page);
+    if (i < 0)
+        return;
+    if (i >= PK_COUNT) {
+        int hk = HK_PIN_LIST + i - PK_COUNT;
+        S.cfg.mod[hk] = key.mod;
+        S.cfg.vk[hk] = key.vk;
+    } else {
+        for (int j = 0; key.vk && j < PK_COUNT; j++) {
+            KeyBinding other = S.cfg.pins.key[j];
+            if (i != j && other.vk == key.vk && other.mod == key.mod) {
+                WCHAR text[160];
+                wsprintfW(text, T(P_KEY_IN_USE), g_tr[pin_key_text[j]]);
+                show_pin_key(page);
+                daemon_cmd(L"_reload", NULL);
+                MessageBoxW(S.dlg, text, T(SETTINGS_TITLE), MB_OK | MB_ICONINFORMATION);
+                return;
+            }
+        }
+        S.cfg.pins.key[i] = key;
+    }
+    show_pin_key(page);
+    apply();
+}
+
+static void pin_page_command(HWND page, int id, int code, HWND ctl)
+{
+    PinPrefs *p = &S.cfg.pins;
+    if (id == IDC_P_ACTION && code == CBN_SELCHANGE) {
+        show_pin_key(page);
+    } else if (id == IDC_P_KEY && code == HKN_BEGIN) {
+        daemon_cmd(L"_hotkeys", L"off");
+    } else if (id == IDC_P_KEY && code == HKN_DONE) {
+        const HkField *f = (const HkField *)GetWindowLongPtrW(ctl, GWLP_USERDATA);
+        set_pin_key(page, (KeyBinding){f->mod, f->vk});
+    } else if (id == IDC_P_CLEAR && code == BN_CLICKED) {
+        set_pin_key(page, (KeyBinding){0, 0});
+    } else if (id >= IDC_P_RESTORE && id <= IDC_P_INACTIVE_BORDER && code == BN_CLICKED) {
+        bool on = IsDlgButtonChecked(page, id) == BST_CHECKED;
+        bool *value = id == IDC_P_RESTORE ? &p->restore_session : id == IDC_P_DOUBLE ? &p->compact_on_double_click
+                                                                                  : &p->inactive_outline;
+        *value = on;
+        apply();
+    } else if ((id == IDC_P_TRASH || id == IDC_P_INACTIVE || id == IDC_P_HOVER) && code == EN_KILLFOCUS) {
+        BOOL valid;
+        UINT n = GetDlgItemInt(page, id, &valid, FALSE);
+        UINT max = id == IDC_P_TRASH ? PIN_TRASH_MAX : 100;
+        int *value = id == IDC_P_TRASH ? &p->trash_limit : id == IDC_P_INACTIVE ? &p->inactive : &p->hover;
+        if (valid && *value != (int)MINI(n, max)) {
+            *value = (int)MINI(n, max);
+            apply();
+        }
+        SetDlgItemInt(page, id, *value, FALSE);
+    }
 }
 
 /* ---- the programs the hotkeys step aside for: a list like the one Windows has for a path ---- */
@@ -740,8 +832,11 @@ static const Shortcut kShortcuts[] = {
     {0, S_SC_UNDO, L"Ctrl+Z", 0, 0},
     {0, S_SC_CANCEL, L"Esc", 0, 0},
     {1, S_SC_PIN_CLIP, NULL, 0, HK_PIN},
+    {1, S_PM_LIST, NULL, 0, HK_PIN_LIST},
+    {1, S_P_GLOBAL_UNDO, NULL, 0, HK_PIN_UNDO},
     {1, S_SC_ZOOM, NULL, S_K_WHEEL, 0},
     {1, S_SC_OPACITY, NULL, S_K_CTRL_WHEEL, 0},
+    {1, S_P_FOLD, NULL, S_K_DBL, 0},
     {1, S_SC_CLOSE, NULL, S_K_DBL_ESC, 0},
     {2, S_SC_GROW, NULL, S_K_WHEEL_CAP, 0},
     {2, S_SC_NUDGE, NULL, S_K_ARROWS, 0},
@@ -770,8 +865,12 @@ static void fill_shortcuts(HWND list)
     }
     for (int i = 0; i < COUNTOF(kShortcuts); i++) {
         const Shortcut *s = &kShortcuts[i];
+        if (s->what == S_P_FOLD && !S.cfg.pins.compact_on_double_click)
+            continue;
         WCHAR keys[40];
-        if (s->keys || s->keys_s)
+        if (s->what == S_SC_CLOSE && S.cfg.pins.compact_on_double_click)
+            lstrcpyW(keys, L"Esc");
+        else if (s->keys || s->keys_s)
             lstrcpynW(keys, s->keys ? s->keys : g_tr[s->keys_s], COUNTOF(keys));
         else if (S.cfg.vk[s->hk])
             hotkey_format(S.cfg.mod[s->hk], S.cfg.vk[s->hk], keys);
@@ -1263,8 +1362,8 @@ static void page_command(HWND page, int id, int code, HWND ctl)
             S.cfg.also_save = d.also_save;
             CheckDlgButton(page, IDC_ALSO_SAVE, d.also_save ? BST_CHECKED : BST_UNCHECKED);
         } else if (page == S.page[PG_HOTKEYS]) {
-            memcpy(S.cfg.mod, d.mod, sizeof d.mod);
-            memcpy(S.cfg.vk, d.vk, sizeof d.vk);
+            memcpy(S.cfg.mod, d.mod, (HK_OCRCOPY + 1) * sizeof d.mod[0]);
+            memcpy(S.cfg.vk, d.vk, (HK_OCRCOPY + 1) * sizeof d.vk[0]);
             show_hotkeys();
             S.cfg.block_fullscreen = d.block_fullscreen;
             CheckDlgButton(page, IDC_HK_FULLSCREEN, d.block_fullscreen ? BST_CHECKED : BST_UNCHECKED);
@@ -1272,6 +1371,13 @@ static void page_command(HWND page, int id, int code, HWND ctl)
         } else if (page == S.page[PG_UPDATE] && !S.portable) {
             S.cfg.auto_update = d.auto_update;
             CheckDlgButton(page, IDC_U_AUTO, d.auto_update ? BST_CHECKED : BST_UNCHECKED);
+        } else if (page == S.page[PG_PINS]) {
+            S.cfg.pins = d.pins;
+            for (int id = HK_PIN_LIST; id <= HK_PIN_UNDO; id++) {
+                S.cfg.mod[id] = d.mod[id];
+                S.cfg.vk[id] = d.vk[id];
+            }
+            show_pin_prefs(page);
         }
         apply();
         break;
@@ -1287,16 +1393,25 @@ static INT_PTR CALLBACK page_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
             S.theme_tex(h, ETDT_ENABLETAB_); /* page background matches the tab body */
         return FALSE;
     case WM_COMMAND:
-        page_command(h, LOWORD(wp), HIWORD(wp), (HWND)lp);
+        if (h == S.page[PG_PINS] && LOWORD(wp) != IDC_DEFAULTS)
+            pin_page_command(h, LOWORD(wp), HIWORD(wp), (HWND)lp);
+        else
+            page_command(h, LOWORD(wp), HIWORD(wp), (HWND)lp);
         return TRUE;
     case WM_DRAWITEM: {
         const DRAWITEMSTRUCT *di = (const DRAWITEMSTRUCT *)lp;
         int id = (int)di->CtlID, kind = RI_NONE;
-        if (id >= IDC_HK_CLEAR1 && id <= IDC_HK_CLEAR6)
+        if ((id >= IDC_HK_CLEAR1 && id <= IDC_HK_CLEAR6) || id == IDC_P_CLEAR)
             kind = RI_CLEAR;
         else if (id >= IDC_HK_STATE1 && id <= IDC_HK_STATE6) {
             int hk = id - IDC_HK_STATE1 + 1;
             kind = !S.cfg.vk[hk] || S.state[hk] == 2 ? RI_NONE : S.state[hk] ? RI_OK : RI_FAIL;
+        } else if (id == IDC_P_STATE) {
+            int i = pin_key_choice(h);
+            if (i >= PK_COUNT) {
+                int hk = HK_PIN_LIST + i - PK_COUNT;
+                kind = !S.cfg.vk[hk] || S.state[hk] == 2 ? RI_NONE : S.state[hk] ? RI_OK : RI_FAIL;
+            }
         } else if (id == IDC_HELPBTN)
             kind = RI_HELP;
         draw_round_icon(di, kind);
@@ -1372,6 +1487,14 @@ static const struct {
     {PG_OCR, IDC_HINT, S_O_HINT},
     {PG_ABOUT, IDC_TAGLINE, S_TAGLINE},
     {PG_ABOUT, IDC_LICENSE, S_A_LICENSE},
+    {PG_PINS, IDC_P_RESTORE, S_P_RESTORE},
+    {PG_PINS, IDC_P_DOUBLE, S_P_DOUBLE},
+    {PG_PINS, IDC_P_INACTIVE_BORDER, S_P_INACTIVE_BORDER},
+    {PG_PINS, IDC_P_TRASH_LABEL, S_P_TRASH},
+    {PG_PINS, IDC_P_INACTIVE_LABEL, S_P_INACTIVE},
+    {PG_PINS, IDC_P_HOVER_LABEL, S_P_HOVER},
+    {PG_PINS, IDC_P_OPACITY_HINT, S_P_OPACITY_HINT},
+    {PG_PINS, IDC_P_ACTION_LABEL, S_P_ACTION},
 };
 _Static_assert(S_COUNT <= 65536, "kTexts keeps text numbers in 16 bits");
 
@@ -1393,6 +1516,14 @@ static void select_page(int i)
         ShowWindow(S.page[k], k == i ? SW_SHOW : SW_HIDE);
 }
 
+/* The numeric fields apply on leaving the field, including when the dialog closes. */
+static void finish_pin_field(void)
+{
+    HWND field = GetFocus(), page = S.page[PG_PINS];
+    if (field && GetParent(field) == page)
+        pin_page_command(page, GetDlgCtrlID(field), EN_KILLFOCUS, field);
+}
+
 static INT_PTR CALLBACK main_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
 {
     switch (m) {
@@ -1407,8 +1538,8 @@ static INT_PTR CALLBACK main_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         SendMessageW(h, WM_SETICON, ICON_SMALL, (LPARAM)small);
         SetPropW(h, SETTINGS_MARK, (HANDLE)1);
         SetWindowTextW(h, T(SETTINGS_TITLE));
-        static const int ids[PG_COUNT] = {IDD_PAGE_GENERAL, IDD_PAGE_CAPTURE, IDD_PAGE_HOTKEYS, IDD_PAGE_UPDATE,
-                                           IDD_PAGE_OCR,     IDD_PAGE_ABOUT};
+        static const int ids[PG_COUNT] = {IDD_PAGE_GENERAL, IDD_PAGE_CAPTURE, IDD_PAGE_HOTKEYS, IDD_PAGE_PINS,
+                                           IDD_PAGE_UPDATE,  IDD_PAGE_OCR,     IDD_PAGE_ABOUT};
         RECT rc;
         GetWindowRect(S.tabs, &rc);
         MapWindowPoints(NULL, h, (POINT *)&rc, 2);
@@ -1466,6 +1597,18 @@ static INT_PTR CALLBACK main_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         SendDlgItemMessageW(S.page[PG_OCR], IDC_O_BAR, PBM_SETRANGE, 0, MAKELPARAM(0, 100));
         ocr_show();
         show_hotkeys();
+        HWND pins = S.page[PG_PINS];
+        for (int i = 0; i < PK_COUNT; i++)
+            SendDlgItemMessageW(pins, IDC_P_ACTION, CB_ADDSTRING, 0, (LPARAM)g_tr[pin_key_text[i]]);
+        static const int global_pin_actions[] = {S_P_GLOBAL_LIST, S_P_GLOBAL_UNDO};
+        WCHAR action_text[144];
+        for (int i = 0; i < COUNTOF(global_pin_actions); i++) {
+            wsprintfW(action_text, T(P_GLOBAL_ACTION), g_tr[global_pin_actions[i]]);
+            SendDlgItemMessageW(pins, IDC_P_ACTION, CB_ADDSTRING, 0, (LPARAM)action_text);
+        }
+        SendDlgItemMessageW(pins, IDC_P_ACTION, CB_SETDROPPEDWIDTH, MulDiv(300, GetDpiForWindow(h), 96), 0);
+        SendDlgItemMessageW(pins, IDC_P_ACTION, CB_SETCURSEL, 0, 0);
+        show_pin_prefs(pins);
         HWND k = S.page[PG_HOTKEYS];
         CheckDlgButton(k, IDC_HK_FULLSCREEN, S.cfg.block_fullscreen ? BST_CHECKED : BST_UNCHECKED);
         daemon_cmd(L"_hkstate", NULL);
@@ -1549,12 +1692,18 @@ static INT_PTR CALLBACK main_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         MessageBoxW(h, T(O_WRITE_FAILED), T(SETTINGS_TITLE), MB_OK | MB_ICONWARNING);
         return TRUE;
     case WM_COMMAND:
-        if (LOWORD(wp) == IDCANCEL && !S.installing) /* not while the installer is swapping files */
+        if (LOWORD(wp) == IDOK)
+            finish_pin_field();
+        else if (LOWORD(wp) == IDCANCEL && !S.installing) { /* not while the installer is swapping files */
+            finish_pin_field();
             EndDialog(h, 0);
+        }
         return TRUE;
     case WM_CLOSE:
-        if (!S.installing)
+        if (!S.installing) {
+            finish_pin_field();
             EndDialog(h, 0);
+        }
         return TRUE;
     }
     return FALSE;
@@ -1598,6 +1747,7 @@ int settings_main(HINSTANCE inst, const WCHAR *page)
                    : arg_eq(page, L"update")              ? PG_UPDATE
                    : arg_eq(page, L"ocr") || S.ocr_auto   ? PG_OCR
                    : arg_eq(page, L"about")               ? PG_ABOUT
+                   : arg_eq(page, L"pins")                ? PG_PINS
                                                           : PG_GENERAL;
     HWND open = ipc_find_dialog(SETTINGS_MARK);
     if (open) {

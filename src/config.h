@@ -2,13 +2,32 @@
 #pragma once
 #include "common.h"
 
-/* the last two are for text: taken from the system only while the text recognition module is there */
-enum { HK_CAPTURE = 1, HK_QUICK, HK_PIN, HK_TOGGLE, HK_OCR, HK_OCRCOPY, HK_COUNT };
+enum { HK_CAPTURE = 1, HK_QUICK, HK_PIN, HK_TOGGLE, HK_OCR, HK_OCRCOPY, HK_PIN_LIST, HK_PIN_UNDO, HK_COUNT };
+enum {
+    PK_CLOSE, PK_COMPACT, PK_COPY, PK_CUT, PK_SAVE, PK_PASTE, PK_ROTATE, PK_FLIP_H, PK_FLIP_V, PK_CROP, PK_BORDER,
+    PK_ZOOM_IN, PK_ZOOM_OUT, PK_ALPHA_MORE, PK_ALPHA_LESS, PK_UP, PK_DOWN, PK_LEFT, PK_RIGHT,
+    PK_Z50, PK_Z60, PK_Z70, PK_Z80, PK_Z90, PK_Z100, PK_COUNT
+};
+enum { PIN_TRASH_MAX = 50 };
 enum { THEME_AUTO, THEME_LIGHT, THEME_DARK }; /* the capture's bars: as Windows is set, or always one */
 enum { NAME_COUNT = 7, NAME_CAP = 32 };       /* the file names to choose from; room for the longest, with its 0 */
 
+typedef struct { UINT mod, vk; } KeyBinding;
+
+typedef struct {
+    KeyBinding key[PK_COUNT];
+    int trash_limit;          /* 0 disables the recycle bin */
+    int inactive, hover;      /* opacity in percent; 0 uses the pin's own opacity */
+    bool compact_on_double_click;
+    bool restore_session;
+    bool inactive_outline;
+} PinPrefs;
+
+extern const int pin_key_text[PK_COUNT]; /* localized names, indexed by PK_* */
+
 typedef struct {
     UINT mod[HK_COUNT], vk[HK_COUNT]; /* index HK_*; vk 0 = no hotkey */
+    PinPrefs pins;
     bool gdi;                         /* GDI capture instead of DXGI */
     bool tray;                        /* show the notification-area icon */
     bool pin_top;                     /* every pin stays above other windows */

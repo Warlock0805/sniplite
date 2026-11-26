@@ -62,7 +62,7 @@ Il existe aussi deux versions portables, sans installation : `sniplite_<version>
 | **Esc** | Annuler la capture |
 | **Flèches**, **W A S D** | Déplacer le curseur ou la sélection d'un pixel ; de dix avec Shift |
 | **Molette** | Pendant la capture : choisir une fenêtre plus grande ou plus petite ; sur une épingle : zoomer |
-| **Double-clic** | Fermer une épingle |
+| **Double-clic** | Replier ou déplier une épingle |
 
 ## Questions fréquentes
 

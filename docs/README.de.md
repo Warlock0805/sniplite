@@ -62,7 +62,7 @@ Dazu gibt es zwei portable Versionen ohne Installation: `sniplite_<Version>_port
 | **Esc** | Aufnahme abbrechen |
 | **Pfeiltasten**, **W A S D** | Cursor oder Auswahl um 1 Pixel verschieben, mit Shift um 10 |
 | **Mausrad** | Bei der Aufnahme: größeres oder kleineres Fenster wählen; auf einem Pin: zoomen |
-| **Doppelklick** | Pin schließen |
+| **Doppelklick** | Pin ein- oder ausklappen |
 
 ## Häufige Fragen
 

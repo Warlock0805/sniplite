@@ -110,6 +110,23 @@
 #define IDC_APPS_TEXT_LABEL 237
 #define IDC_APPS_TEXT_EDIT 238
 
+#define IDD_PAGE_PINS 117
+#define IDC_P_RESTORE 239
+#define IDC_P_DOUBLE 240
+#define IDC_P_INACTIVE_BORDER 241
+#define IDC_P_TRASH_LABEL 242
+#define IDC_P_TRASH 243
+#define IDC_P_INACTIVE_LABEL 244
+#define IDC_P_INACTIVE 245
+#define IDC_P_HOVER_LABEL 246
+#define IDC_P_HOVER 247
+#define IDC_P_OPACITY_HINT 248
+#define IDC_P_ACTION_LABEL 249
+#define IDC_P_ACTION 250
+#define IDC_P_KEY 251
+#define IDC_P_CLEAR 252
+#define IDC_P_STATE 253
+
 /* the question before a capture is left (main.c) */
 #define IDD_LEAVE 114
 #define IDC_L_TEXT 221

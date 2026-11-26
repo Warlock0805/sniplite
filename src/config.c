@@ -13,7 +13,25 @@ static const struct {
     {L"End", VK_END},        {L"PgUp", VK_PRIOR},          {L"PageUp", VK_PRIOR},   {L"PgDn", VK_NEXT},
     {L"PageDown", VK_NEXT},  {L"Pause", VK_PAUSE},         {L"ScrollLock", VK_SCROLL}, {L"Space", VK_SPACE},
     {L"Tab", VK_TAB},        {L"`", VK_OEM_3},             {L"Up", VK_UP},          {L"Down", VK_DOWN},
-    {L"Left", VK_LEFT},      {L"Right", VK_RIGHT},
+    {L"Left", VK_LEFT},      {L"Right", VK_RIGHT},    {L"Enter", VK_RETURN},      {L"Esc", VK_ESCAPE},
+};
+
+static const struct {
+    const WCHAR *ini, *key;
+} kPinKeys[PK_COUNT] = {
+    {L"close", L"Q"}, {L"compact", L"none"}, {L"copy", L"Ctrl+C"}, {L"cut", L"Ctrl+X"},
+    {L"save", L"Ctrl+S"}, {L"paste", L"Ctrl+V"}, {L"rotate", L"R"}, {L"flip_h", L"Alt+X"},
+    {L"flip_v", L"Alt+V"}, {L"crop", L"T"}, {L"border", L"L"}, {L"zoom_in", L"Alt+Up"},
+    {L"zoom_out", L"Alt+Down"}, {L"alpha_more", L"Alt+Right"}, {L"alpha_less", L"Alt+Left"},
+    {L"up", L"Up"}, {L"down", L"Down"}, {L"left", L"Left"}, {L"right", L"Right"},
+    {L"zoom_50", L"5"}, {L"zoom_60", L"6"}, {L"zoom_70", L"7"}, {L"zoom_80", L"8"},
+    {L"zoom_90", L"9"}, {L"zoom_100", L"0"},
+};
+
+const int pin_key_text[PK_COUNT] = {
+    S_PM_CLOSE, S_PM_COMPACT, S_PM_COPY, S_PM_CUT, S_PM_SAVE, S_PM_PASTE, S_PM_ROTATE, S_PM_FLIP_H, S_PM_FLIP_V,
+    S_PM_CROP, S_PM_BORDER, S_PM_ZOOM_IN, S_PM_ZOOM_OUT, S_PM_ALPHA_MORE, S_PM_ALPHA_LESS, S_PM_UP, S_PM_DOWN,
+    S_PM_LEFT, S_PM_RIGHT, S_PM_Z50, S_PM_Z60, S_PM_Z70, S_PM_Z80, S_PM_Z90, S_PM_Z100,
 };
 
 bool hotkey_parse(const WCHAR *s, UINT *mod, UINT *vk)
@@ -102,6 +120,12 @@ void config_defaults(Config *c)
     hotkey_parse(L"Shift+F3", &c->mod[HK_TOGGLE], &c->vk[HK_TOGGLE]);
     hotkey_parse(L"F4", &c->mod[HK_OCR], &c->vk[HK_OCR]);
     hotkey_parse(L"Shift+F4", &c->mod[HK_OCRCOPY], &c->vk[HK_OCRCOPY]);
+    for (int i = 0; i < PK_COUNT; i++)
+        hotkey_parse(kPinKeys[i].key, &c->pins.key[i].mod, &c->pins.key[i].vk);
+    c->pins.trash_limit = 5;
+    c->pins.compact_on_double_click = true;
+    c->pins.restore_session = true;
+    c->pins.inactive_outline = true;
     c->tray = true;
     c->pin_top = true;
     c->pin_text = true;
@@ -112,7 +136,8 @@ void config_defaults(Config *c)
 void config_path(WCHAR *out, int cap) { ini_path(out, cap); }
 
 static const WCHAR *kHkKeys[HK_COUNT] = {NULL,           L"hotkey",     L"quick_hotkey",   L"pin_hotkey",
-                                         L"toggle_hotkey", L"ocr_hotkey", L"ocr_copy_hotkey"};
+                                         L"toggle_hotkey", L"ocr_hotkey", L"ocr_copy_hotkey",
+                                         L"pin_list_hotkey", L"pin_undo_hotkey"};
 static const WCHAR *kThemes[] = {L"auto", L"light", L"dark"}; /* by THEME_* */
 static const WCHAR *kDetects[] = {L"controls", L"windows", L"elements"}; /* by DETECT_* */
 /* the file names: two or more of y M d H m s in a row stand for that part of the time */
@@ -217,6 +242,19 @@ bool config_load(Config *c)
     c->tray = GetPrivateProfileIntW(L"sniplite", L"tray", 1, path) != 0;
     c->pin_top = GetPrivateProfileIntW(L"sniplite", L"pin_top", 1, path) != 0;
     c->pin_text = GetPrivateProfileIntW(L"sniplite", L"pin_text", 1, path) != 0;
+    c->pins.trash_limit = CLAMPI((int)GetPrivateProfileIntW(L"pins", L"trash_limit", c->pins.trash_limit, path), 0,
+                                PIN_TRASH_MAX);
+    c->pins.inactive = CLAMPI((int)GetPrivateProfileIntW(L"pins", L"inactive_opacity", 0, path), 0, 100);
+    c->pins.hover = CLAMPI((int)GetPrivateProfileIntW(L"pins", L"hover_opacity", 0, path), 0, 100);
+    c->pins.compact_on_double_click = GetPrivateProfileIntW(L"pins", L"double_click_compact", 1, path) != 0;
+    c->pins.restore_session = GetPrivateProfileIntW(L"pins", L"restore_session", 1, path) != 0;
+    c->pins.inactive_outline = GetPrivateProfileIntW(L"pins", L"inactive_outline", 1, path) != 0;
+    for (int i = 0; i < PK_COUNT; i++) {
+        UINT mod, vk;
+        GetPrivateProfileStringW(L"pin_keys", kPinKeys[i].ini, L"\x1F", v, COUNTOF(v), path);
+        if (v[0] != 0x1F && hotkey_parse(v, &mod, &vk) && !(mod & MOD_WIN) && vk != VK_ESCAPE)
+            c->pins.key[i] = (KeyBinding){mod, vk};
+    }
     c->auto_update = GetPrivateProfileIntW(L"sniplite", L"auto_update", 1, path) != 0;
     c->exit_ask = GetPrivateProfileIntW(L"sniplite", L"exit_ask", 1, path) != 0;
     c->also_save = GetPrivateProfileIntW(L"sniplite", L"also_save", 0, path) != 0;
@@ -261,6 +299,15 @@ bool config_save(const Config *c)
     str_add(&s, L"\r\n");
     if (lang_choice() != LG_AUTO) /* kept by lang.c; without the line the language follows Windows */
         str_addf(&s, L"lang=%s\r\n", lang_code(lang_choice()));
+    str_addf(&s, L"\r\n[pins]\r\ntrash_limit=%d\r\nrestore_session=%d\r\ndouble_click_compact=%d\r\n"
+                 L"inactive_opacity=%d\r\nhover_opacity=%d\r\ninactive_outline=%d\r\n\r\n[pin_keys]\r\n",
+             c->pins.trash_limit, c->pins.restore_session, c->pins.compact_on_double_click, c->pins.inactive,
+             c->pins.hover, c->pins.inactive_outline);
+    for (int i = 0; i < PK_COUNT; i++) {
+        WCHAR k[40];
+        hotkey_format(c->pins.key[i].mod, c->pins.key[i].vk, k);
+        str_addf(&s, L"%s=%s\r\n", kPinKeys[i].ini, k);
+    }
     /* UTF-8 without BOM: Notepad shows the comments, and the ASCII keys/values
      * read back fine through GetPrivateProfileString. */
     int n = WideCharToMultiByte(CP_UTF8, 0, s.p, s.n, NULL, 0, NULL, NULL);

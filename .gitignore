@@ -1,4 +1,6 @@
 build/
 *.ini
+sniplite.pins
+sniplite.pins.tmp
 # local tests against earlier versions of the code, not part of the repository
 tests/

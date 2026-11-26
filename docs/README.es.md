@@ -62,7 +62,7 @@ También hay dos versiones portables, sin instalación: `sniplite_<versión>_por
 | **Esc** | Cancelar la captura |
 | **Flechas**, **W A S D** | Mover el cursor o la selección un píxel; con Shift, diez |
 | **Rueda** | Al capturar: elegir una ventana mayor o menor; sobre una imagen fijada: zoom |
-| **Doble clic** | Cerrar una imagen fijada |
+| **Doble clic** | Plegar o desplegar una imagen fijada |
 
 ## Preguntas frecuentes
 

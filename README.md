@@ -22,6 +22,23 @@
 
 </div>
 
+## About this fork
+
+The app is based on sniplite 1.5.1. [MrTangLuyao/sniplite](https://github.com/MrTangLuyao/sniplite)
+
+The pin interactions were adapted from SETUNA2 to sniplite’s C and Win32 implementation. Both projects are credited in the [MIT license](LICENSE). [tylearymf/SETUNA2](https://github.com/tylearymf/SETUNA2)
+
+- Double-click to collapse or expand a pin. Use keyboard shortcuts for pixel nudging, preset zoom, rotation, mirroring, and cropping.
+- Find pins by thumbnail in the pin list. Restore pins closed during the current session from the recycle bin.
+- Restore open pins on the next launch with their position, scale, opacity, and collapsed state.
+- Set pin shortcuts, recycle bin capacity, startup restore, and inactive or hover appearance under **Settings → Pins**.
+
+To build this edition, run `build.bat` with MinGW-w64. The download link below and the in-app update check point to upstream sniplite releases.
+
+### Syncing with upstream
+
+`main` tracks upstream sniplite. `pin-enhancements` contains this fork’s pin changes. After updating `main`, merge it into `pin-enhancements`, resolve any conflicts, and build and test before pushing. [GitHub’s guide to syncing a fork](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/syncing-a-fork)
+
 ## Features
 
 - **Fast**: press F1 and the screenshot is there, sooner than in 99% of screenshot tools
@@ -62,7 +79,11 @@ There are two portable versions too, with nothing to install: `sniplite_<version
 | **Esc** | Cancel the capture |
 | **Arrow keys**, **W A S D** | Move the cursor or the selection by one pixel; with Shift, by ten |
 | **Wheel** | Capturing: pick a bigger or smaller window; on a pin: zoom |
-| **Double-click** | Close a pin |
+| **Double-click** | Collapse or expand a pin |
+
+On a focused pin, use the arrow keys to move one pixel or hold Shift to move 50 pixels. Use `5` through `9` for 50% through 90% zoom and `0` for 100%. Press `R` to rotate or `T` to select a crop, then press Enter to apply it. Esc expands a collapsed pin or closes an expanded pin.
+
+The pin and tray menus have a **Pins list** and **Pin recycle bin**. Select a pin to bring it into view or restore one you closed during the current session. The **Pins** page in Settings controls shortcuts, recycle bin size, startup restore, double-click behavior, and the appearance of inactive pins.
 
 ## FAQ
 
@@ -109,7 +130,7 @@ About 50 MB most of the time, nearly all of it held by the graphics driver, and 
 
 **What does it leave on my computer?**
 
-It needs no administrator rights and does not touch the registry. Changing a setting, or saving through the save dialog (it remembers the folder), creates one settings file; delete it to get the defaults back.
+It needs no administrator rights and does not touch the registry. Changing a setting or using the save dialog creates a settings file next to the program. With startup restore enabled, open pins are kept in `sniplite.pins` next to the program. Turning off startup restore deletes that cache.
 
 **How do I change the language?**
 

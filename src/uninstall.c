@@ -7,6 +7,7 @@
 #include "common.h"
 #include "install.h"
 #include "lang.h"
+#include "pin.h"
 #include "settings.h"
 #include <shlobj.h>
 
@@ -81,7 +82,8 @@ int uninstall_main(bool silent)
 
     for (int i = 0; i < 20 && !ocr_remove(); i++) /* the text recognition module; its helper may take a moment to leave */
         Sleep(100);
-    static const WCHAR *files[] = {L"sniplite.com", L"sniplite.ini", L"sniplite.exe.new", L"sniplite.com.new"};
+    static const WCHAR *files[] = {L"sniplite.com", L"sniplite.ini", PIN_CACHE_FILE, PIN_CACHE_TEMP, L"sniplite.exe.new",
+                                   L"sniplite.com.new"};
     for (int i = 0; i < COUNTOF(files); i++)
         if (join(p, dir, files[i]))
             DeleteFileW(p);

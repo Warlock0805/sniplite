@@ -535,6 +535,9 @@ X(SHORTCUTS_TITLE,
 X(TAB_GENERAL, "常规", "一般", "General", "全般", "일반", "Général", "Allgemein", "General")
 X(TAB_CAPTURE, "截屏", "截圖", "Capture", "キャプチャ", "캡처", "Capture", "Aufnahme", "Captura")
 X(TAB_HOTKEYS, "控制", "快速鍵", "Hotkeys", "ホットキー", "단축키", "Raccourcis", "Tasten", "Atajos")
+X(TAB_PINS,
+  "贴图", "貼圖", "Pins", "ピン留め",
+  "고정 이미지", "Épingles", "Pins", "Fijadas")
 X(TAB_UPDATE, "更新", "更新", "Update", "更新", "업데이트", "Mise à jour", "Update", "Actualización")
 X(TAB_OCR, "文字识别", "文字辨識", "OCR", "OCR", "OCR", "OCR", "OCR", "OCR")
 X(TAB_ABOUT, "关于", "關於", "About", "情報", "정보", "À propos", "Info", "Acerca de")
@@ -747,6 +750,8 @@ X(K_ENTER_DBL,
 X(K_WHEEL, "滚轮", "滾輪", "Wheel", "ホイール", "휠", "Molette", "Mausrad", "Rueda")
 X(K_CTRL_WHEEL, "Ctrl+滚轮", "Ctrl+滾輪", "Ctrl+Wheel", "Ctrl+ホイール", "Ctrl+휠", "Ctrl+Molette", "Ctrl+Mausrad",
   "Ctrl+Rueda")
+X(K_DBL,
+  "双击", "點兩下", "Double-click", "ダブルクリック", "더블 클릭", "Double-clic", "Doppelklick", "Doble clic")
 X(K_DBL_ESC,
   "双击 或 Esc", "點兩下 或 Esc", "Double-click or Esc", "ダブルクリックまたは Esc", "더블클릭 또는 Esc",
   "Double-clic ou Esc", "Doppelklick oder Esc", "Doble clic o Esc")
@@ -943,16 +948,154 @@ X(PIN_COPIED, "已复制", "已複製", "Copied", "コピーしました", "복�
 X(PIN_SAVED, "已保存", "已儲存", "Saved", "保存しました", "저장됨", "Enregistré", "Gespeichert", "Guardado")
 X(PIN_SAVE_FAILED, "保存失败", "儲存失敗", "Save failed", "保存できません", "저장 실패", "Échec", "Fehlgeschlagen",
   "Error al guardar")
-X(PM_COPY, "复制\tCtrl+C", "複製\tCtrl+C", "Copy\tCtrl+C", "コピー\tCtrl+C", "복사\tCtrl+C", "Copier\tCtrl+C",
-  "Kopieren\tCtrl+C", "Copiar\tCtrl+C")
+X(P_RESTORE,
+  "启动时恢复未关闭的贴图", "啟動時復原未關閉的貼圖", "Restore open pins on startup", "起動時にピンを復元",
+  "시작 시 고정 이미지 복원", "Restaurer les épingles au démarrage", "Pins beim Start wiederherstellen", "Restaurar al iniciar")
+X(P_DOUBLE,
+  "双击收起／展开贴图", "按兩下收合／展開貼圖", "Double-click to collapse or expand", "ダブルクリックで折りたたむ／展開",
+  "더블 클릭으로 접기 또는 펼치기", "Double-clic pour replier ou déplier", "Doppelklick zum Ein- und Ausklappen", "Doble clic para plegar o desplegar")
+X(P_TRASH,
+  "回收站容量（0 为关闭）", "資源回收筒容量（0 為停用）", "Recycle bin size (0 = off)", "ごみ箱の容量（0 で無効）",
+  "휴지통 용량 (0은 끄기)", "Taille de la corbeille (0 = désactivée)", "Papierkorbgröße (0 = aus)", "Capacidad de la papelera (0 = no)")
+X(P_INACTIVE,
+  "未选中时的不透明度（%）", "未選取時的不透明度（%）", "Inactive opacity (%)", "非アクティブ時の不透明度（%）",
+  "비활성 불투명도 (%)", "Opacité hors sélection (%)", "Inaktive Deckkraft (%)", "Opacidad inactiva (%)")
+X(P_HOVER,
+  "悬停时的不透明度（%）", "懸停時的不透明度（%）", "Hover opacity (%)", "マウスを重ねたときの不透明度（%）",
+  "마우스를 올렸을 때 불투명도 (%)", "Opacité au survol (%)", "Deckkraft beim Überfahren (%)", "Opacidad al pasar el cursor (%)")
+X(P_INACTIVE_BORDER,
+  "未选中时显示边框", "未選取時顯示邊框", "Show border on inactive pins", "非アクティブ時に枠を表示",
+  "비활성 이미지 테두리 표시", "Bordure des épingles inactives", "Rahmen bei inaktiven Pins anzeigen", "Borde en imágenes inactivas")
+X(P_OPACITY_HINT,
+  "不透明度设为 0，沿用贴图自身设置。", "不透明度設為 0，沿用貼圖自身設定。", "0 keeps the pin’s own opacity.", "0 はピンの不透明度を使用。",
+  "0은 이미지의 불투명도 유지", "0 conserve l’opacité de l’épingle.", "0 verwendet die Deckkraft des Pins.", "0 conserva la opacidad de la imagen.")
+X(P_ACTION,
+  "贴图快捷键", "貼圖快速鍵", "Pin shortcuts", "ピンのショートカット",
+  "고정 이미지 단축키", "Raccourcis des épingles", "Pin-Tastenkürzel", "Atajos de imágenes")
+X(P_GLOBAL_ACTION,
+  "%s（全局）", "%s（全域）", "%s (global)", "%s（グローバル）",
+  "%s (전역)", "%s (global)", "%s (global)", "%s (global)")
+X(P_FOLD,
+  "收起／展开贴图", "收合／展開貼圖", "Collapse / expand pin", "ピンを折りたたむ／展開する",
+  "고정 이미지 접기 / 펼치기", "Replier / déplier l’épingle", "Pin ein-/ausklappen", "Plegar o desplegar")
+X(P_KEY_IN_USE,
+  "该快捷键已用于“%s”。", "該快速鍵已用於「%s」。", "This shortcut is already assigned to %s.", "このキーは「%s」に割り当て済みです。",
+  "이미 %s에 지정된 단축키입니다.", "Ce raccourci est déjà associé à « %s ».", "Diese Taste ist bereits „%s“ zugeordnet.", "Este atajo ya está asignado a %s.")
+X(P_GLOBAL_LIST,
+  "打开贴图列表", "開啟貼圖清單", "Open pins list", "ピン一覧を開く",
+  "고정 목록 열기", "Ouvrir la liste des épingles", "Pin-Liste öffnen", "Abrir lista de imágenes")
+X(P_GLOBAL_UNDO,
+  "恢复最近关闭的贴图", "復原最近關閉的貼圖", "Restore last closed pin", "最後に閉じたピンを復元",
+  "최근 닫은 이미지 복원", "Restaurer la dernière épingle fermée", "Letzten geschlossenen Pin wiederherstellen", "Restaurar la última imagen cerrada")
+X(PM_LIST,
+  "贴图列表", "貼圖清單", "Pins list", "ピン一覧",
+  "고정 이미지 목록", "Liste des épingles", "Pin-Liste", "Lista de imágenes")
+X(PM_TRASH,
+  "贴图回收站", "貼圖資源回收筒", "Pin recycle bin", "ピンのごみ箱",
+  "고정 이미지 휴지통", "Corbeille des épingles", "Pin-Papierkorb", "Papelera de imágenes")
+X(PM_EMPTY,
+  "空", "空", "Empty", "空",
+  "비어 있음", "Vide", "Leer", "Vacío")
+X(PM_TRASH_CLEAR,
+  "清空回收站", "清空資源回收筒", "Empty recycle bin", "ごみ箱を空にする",
+  "휴지통 비우기", "Vider la corbeille", "Papierkorb leeren", "Vaciar papelera")
+X(PM_TRASH_CONFIRM,
+  "永久删除回收站中的所有贴图？", "永久刪除資源回收筒中的所有貼圖？", "Permanently delete all pins in the recycle bin?", "ごみ箱のピンを完全に削除しますか？",
+  "휴지통의 모든 이미지를 영구 삭제할까요?", "Supprimer définitivement les épingles de la corbeille ?", "Alle Pins im Papierkorb endgültig löschen?", "¿Eliminar todas las imágenes de la papelera?")
+X(PM_COMPACT,
+  "收起", "收合", "Collapse", "折りたたむ",
+  "접기", "Replier", "Einklappen", "Plegar")
+X(PM_EXPAND,
+  "展开", "展開", "Expand", "展開する",
+  "펼치기", "Déplier", "Ausklappen", "Desplegar")
+X(PM_HIDDEN,
+  "已隐藏", "已隱藏", "Hidden", "非表示",
+  "숨김", "Masquée", "Ausgeblendet", "Oculta")
+X(PM_CUT,
+  "剪切", "剪下", "Cut", "切り取り",
+  "잘라내기", "Couper", "Ausschneiden", "Cortar")
+X(PM_PASTE,
+  "粘贴为新贴图", "貼成新貼圖", "Paste as new pin", "新しいピンに貼り付ける",
+  "새 이미지로 붙여넣기", "Coller comme nouvelle épingle", "Als neuen Pin einfügen", "Pegar como nueva imagen")
+X(PM_ROTATE,
+  "顺时针旋转 90°", "順時針旋轉 90°", "Rotate clockwise 90°", "右に90°回転",
+  "시계 방향 90° 회전", "Tourner de 90° à droite", "90° im Uhrzeigersinn drehen", "Girar 90° a la derecha")
+X(PM_FLIP_H,
+  "水平翻转", "水平翻轉", "Flip horizontally", "左右反転",
+  "좌우 뒤집기", "Retourner horizontalement", "Horizontal spiegeln", "Voltear horizontalmente")
+X(PM_FLIP_V,
+  "垂直翻转", "垂直翻轉", "Flip vertically", "上下反転",
+  "상하 뒤집기", "Retourner verticalement", "Vertikal spiegeln", "Voltear verticalmente")
+X(PM_CROP,
+  "裁剪", "裁剪", "Crop", "切り抜く",
+  "자르기", "Rogner", "Zuschneiden", "Recortar")
+X(PM_CROP_HINT,
+  "拖出选区，Enter 确认，Esc 取消", "拖出選區，Enter 確認，Esc 取消", "Drag to select, Enter to crop, Esc to cancel", "ドラッグで選択、Enter で確定、Esc で取消",
+  "드래그하여 선택, Enter 확인, Esc 취소", "Glisser pour sélectionner, Entrée pour rogner, Échap pour annuler", "Ziehen zum Auswählen, Enter zum Zuschneiden, Esc zum Abbrechen", "Arrastra para seleccionar, Intro para recortar y Esc para cancelar")
+X(PM_BORDER,
+  "显示边框", "顯示邊框", "Show border", "枠を表示",
+  "테두리 표시", "Afficher la bordure", "Rahmen anzeigen", "Mostrar borde")
+X(PM_ZOOM,
+  "缩放", "縮放", "Zoom", "拡大縮小",
+  "확대/축소", "Zoom", "Zoom", "Zoom")
+X(PM_ZOOM_IN,
+  "放大", "放大", "Zoom in", "拡大",
+  "확대", "Agrandir", "Vergrößern", "Acercar")
+X(PM_ZOOM_OUT,
+  "缩小", "縮小", "Zoom out", "縮小",
+  "축소", "Réduire", "Verkleinern", "Alejar")
+X(PM_ALPHA_MORE,
+  "提高不透明度", "提高不透明度", "Increase opacity", "不透明度を上げる",
+  "불투명도 높이기", "Augmenter l’opacité", "Deckkraft erhöhen", "Aumentar opacidad")
+X(PM_ALPHA_LESS,
+  "降低不透明度", "降低不透明度", "Decrease opacity", "不透明度を下げる",
+  "불투명도 낮추기", "Réduire l’opacité", "Deckkraft verringern", "Reducir opacidad")
+X(PM_UP,
+  "向上移动", "向上移動", "Move up", "上へ移動",
+  "위로 이동", "Déplacer vers le haut", "Nach oben bewegen", "Mover hacia arriba")
+X(PM_DOWN,
+  "向下移动", "向下移動", "Move down", "下へ移動",
+  "아래로 이동", "Déplacer vers le bas", "Nach unten bewegen", "Mover hacia abajo")
+X(PM_LEFT,
+  "向左移动", "向左移動", "Move left", "左へ移動",
+  "왼쪽으로 이동", "Déplacer à gauche", "Nach links bewegen", "Mover a la izquierda")
+X(PM_RIGHT,
+  "向右移动", "向右移動", "Move right", "右へ移動",
+  "오른쪽으로 이동", "Déplacer à droite", "Nach rechts bewegen", "Mover a la derecha")
+X(PM_PERSIST_FAILED,
+  "无法读取或保存贴图缓存", "無法讀取或儲存貼圖快取", "Could not read or save the pin cache", "ピンのキャッシュを読み書きできません",
+  "고정 이미지 캐시를 읽거나 저장할 수 없습니다", "Impossible de lire ou d’enregistrer le cache des épingles", "Pin-Cache konnte nicht gelesen oder gespeichert werden", "No se pudo leer o guardar la caché de imágenes")
+X(PM_COPY_FAILED,
+  "复制失败", "複製失敗", "Copy failed", "コピーできません",
+  "복사 실패", "Échec de la copie", "Kopieren fehlgeschlagen", "Error al copiar")
+X(PM_EDIT_FAILED,
+  "无法编辑贴图", "無法編輯貼圖", "Could not edit pin", "ピンを編集できません",
+  "이미지를 편집할 수 없습니다", "Impossible de modifier l’épingle", "Pin konnte nicht bearbeitet werden", "No se pudo editar la imagen")
+X(PM_Z50,
+  "50%", "50%", "50%", "50%",
+  "50%", "50%", "50%", "50%")
+X(PM_Z60,
+  "60%", "60%", "60%", "60%",
+  "60%", "60%", "60%", "60%")
+X(PM_Z70,
+  "70%", "70%", "70%", "70%",
+  "70%", "70%", "70%", "70%")
+X(PM_Z80,
+  "80%", "80%", "80%", "80%",
+  "80%", "80%", "80%", "80%")
+X(PM_Z90,
+  "90%", "90%", "90%", "90%",
+  "90%", "90%", "90%", "90%")
+X(PM_Z100,
+  "100%", "100%", "100%", "100%",
+  "100%", "100%", "100%", "100%")
+X(PM_COPY, "复制", "複製", "Copy", "コピー", "복사", "Copier", "Kopieren", "Copiar")
 X(PM_SAVE,
-  "另存为...\tCtrl+S", "另存新檔...\tCtrl+S", "Save as...\tCtrl+S", "名前を付けて保存...\tCtrl+S",
-  "다른 이름으로 저장...\tCtrl+S", "Enregistrer sous...\tCtrl+S", "Speichern unter...\tCtrl+S",
-  "Guardar como...\tCtrl+S")
+  "另存为...", "另存新檔...", "Save as...", "名前を付けて保存...",
+  "다른 이름으로 저장...", "Enregistrer sous...", "Speichern unter...", "Guardar como...")
 X(PM_RESET, "恢复原始大小", "原始大小", "Original size", "元のサイズに戻す", "원래 크기로", "Taille d'origine",
   "Originalgröße", "Tamaño original")
-X(PM_CLOSE, "关闭\tEsc", "關閉\tEsc", "Close\tEsc", "閉じる\tEsc", "닫기\tEsc", "Fermer\tEsc", "Schließen\tEsc",
-  "Cerrar\tEsc")
+X(PM_CLOSE, "关闭", "關閉", "Close", "閉じる", "닫기", "Fermer", "Schließen", "Cerrar")
 X(PM_OCR, "复制文字", "複製文字", "Copy text", "テキストをコピー", "텍스트 복사", "Copier le texte", "Text kopieren",
   "Copiar texto")
 X(PM_TOP_ALL, "置顶所有贴图", "置頂所有貼圖", "All pins on top", "すべてのピンを手前に表示", "모든 고정 이미지를 위에",

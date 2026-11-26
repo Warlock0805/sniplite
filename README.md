@@ -8,7 +8,7 @@
 
 [![English](https://img.shields.io/badge/English-1677e5?style=flat-square)](README.md) [![简体中文](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-eaeef2?style=flat-square)](docs/README.zh-CN.md) [![繁體中文](https://img.shields.io/badge/%E7%B9%81%E9%AB%94%E4%B8%AD%E6%96%87-eaeef2?style=flat-square)](docs/README.zh-TW.md) [![日本語](https://img.shields.io/badge/%E6%97%A5%E6%9C%AC%E8%AA%9E-eaeef2?style=flat-square)](docs/README.ja.md) [![한국어](https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-eaeef2?style=flat-square)](docs/README.ko.md) [![Français](https://img.shields.io/badge/Fran%C3%A7ais-eaeef2?style=flat-square)](docs/README.fr.md) [![Deutsch](https://img.shields.io/badge/Deutsch-eaeef2?style=flat-square)](docs/README.de.md) [![Español](https://img.shields.io/badge/Espa%C3%B1ol-eaeef2?style=flat-square)](docs/README.es.md)
 
-[![version](https://img.shields.io/github/v/tag/MrTangLuyao/sniplite?sort=date&label=version&style=flat-square&color=1677e5)](https://github.com/MrTangLuyao/sniplite/releases) [![system](https://img.shields.io/badge/system-Windows%2010%20%2F%2011-3b82f6?style=flat-square)](#download) [![license](https://img.shields.io/badge/license-MIT-3b82f6?style=flat-square)](LICENSE)
+[![version](https://img.shields.io/github/v/tag/Warlock0805/sniplite?sort=date&label=version&style=flat-square&color=1677e5)](https://github.com/Warlock0805/sniplite/releases) [![system](https://img.shields.io/badge/system-Windows%2010%20%2F%2011-3b82f6?style=flat-square)](#download) [![license](https://img.shields.io/badge/license-MIT-3b82f6?style=flat-square)](LICENSE)
 
 [**Download**](#download) | [Default shortcuts](#default-shortcuts) | [FAQ](#faq)
 
@@ -33,7 +33,7 @@ The pin interactions were adapted from SETUNA2 to sniplite’s C and Win32 imple
 - Restore open pins on the next launch with their position, scale, opacity, and collapsed state.
 - Set pin shortcuts, recycle bin capacity, startup restore, and inactive or hover appearance under **Settings → Pins**.
 
-To build this edition, run `build.bat` with MinGW-w64. The download link below and the in-app update check point to upstream sniplite releases.
+To build this edition, run `build.bat` with MinGW-w64. Installer downloads and in-app updates use this fork’s [Releases](https://github.com/Warlock0805/sniplite/releases). The optional OCR module is fetched from the upstream OCR release.
 
 ### Syncing with upstream
 
@@ -52,7 +52,7 @@ To build this edition, run `build.bat` with MinGW-w64. The download link below a
 
 ## Download
 
-Get the latest installer from [Releases](https://github.com/MrTangLuyao/sniplite/releases/latest).
+Get the latest installer from [Releases](https://github.com/Warlock0805/sniplite/releases/latest).
 
 There are two portable versions too, with nothing to install: `sniplite_<version>_portable_x64.exe`, and `sniplite_<version>_portable_with_OCR_x64.exe`, which carries the text recognition module.
 
@@ -138,7 +138,7 @@ sniplite follows the language of Windows. To use another, open Settings from the
 
 **How do I update?**
 
-Once a day sniplite asks GitHub whether there is a newer version. If there is, a notification appears at the bottom right, and one click updates. Only the version number is checked and nothing is uploaded; you can turn this off in Settings. The portable versions do not look for updates: get the new one from [Releases](https://github.com/MrTangLuyao/sniplite/releases/latest).
+Once a day sniplite asks GitHub whether there is a newer version. If there is, a notification appears at the bottom right, and one click updates. Only the version number is checked and nothing is uploaded; you can turn this off in Settings. The portable versions do not look for updates: get the new one from [Releases](https://github.com/Warlock0805/sniplite/releases/latest).
 
 **How do I uninstall it?**
 

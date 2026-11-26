@@ -8,7 +8,7 @@
 
 [![English](https://img.shields.io/badge/English-eaeef2?style=flat-square)](../README.md) [![简体中文](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-eaeef2?style=flat-square)](README.zh-CN.md) [![繁體中文](https://img.shields.io/badge/%E7%B9%81%E9%AB%94%E4%B8%AD%E6%96%87-eaeef2?style=flat-square)](README.zh-TW.md) [![日本語](https://img.shields.io/badge/%E6%97%A5%E6%9C%AC%E8%AA%9E-1677e5?style=flat-square)](README.ja.md) [![한국어](https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-eaeef2?style=flat-square)](README.ko.md) [![Français](https://img.shields.io/badge/Fran%C3%A7ais-eaeef2?style=flat-square)](README.fr.md) [![Deutsch](https://img.shields.io/badge/Deutsch-eaeef2?style=flat-square)](README.de.md) [![Español](https://img.shields.io/badge/Espa%C3%B1ol-eaeef2?style=flat-square)](README.es.md)
 
-[![バージョン](https://img.shields.io/github/v/tag/MrTangLuyao/sniplite?sort=date&label=%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3&style=flat-square&color=1677e5)](https://github.com/MrTangLuyao/sniplite/releases) [![対応 OS](https://img.shields.io/badge/%E5%AF%BE%E5%BF%9C%20OS-Windows%2010%20%2F%2011-3b82f6?style=flat-square)](#ダウンロード) [![ライセンス](https://img.shields.io/badge/%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9-MIT-3b82f6?style=flat-square)](../LICENSE)
+[![バージョン](https://img.shields.io/github/v/tag/Warlock0805/sniplite?sort=date&label=%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3&style=flat-square&color=1677e5)](https://github.com/Warlock0805/sniplite/releases) [![対応 OS](https://img.shields.io/badge/%E5%AF%BE%E5%BF%9C%20OS-Windows%2010%20%2F%2011-3b82f6?style=flat-square)](#ダウンロード) [![ライセンス](https://img.shields.io/badge/%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9-MIT-3b82f6?style=flat-square)](../LICENSE)
 
 [**ダウンロード**](#ダウンロード) | [既定のショートカット](#既定のショートカット) | [よくある質問](#よくある質問)
 
@@ -35,7 +35,7 @@
 
 ## ダウンロード
 
-[Releases](https://github.com/MrTangLuyao/sniplite/releases/latest) から最新版のインストーラーを入手してください。
+[Releases](https://github.com/Warlock0805/sniplite/releases/latest) から最新版のインストーラーを入手してください。
 
 インストール不要のポータブル版も 2 つあります。`sniplite_<バージョン>_portable_x64.exe` と、文字認識モジュールを含む `sniplite_<バージョン>_portable_with_OCR_x64.exe` です。
 
@@ -117,7 +117,7 @@ Ctrl+S の保存ダイアログには、前回保存したフォルダーが表�
 
 **更新するには？**
 
-1 日に 1 回、新しいバージョンがあるか GitHub に確認します。あれば画面右下に通知が出て、クリックするだけで更新できます。確認するのはバージョン番号だけで、データは一切送信しません。設定でオフにもできます。ポータブル版は更新を確認しないので、新しいバージョンは [Releases](https://github.com/MrTangLuyao/sniplite/releases/latest) から入手してください。
+1 日に 1 回、新しいバージョンがあるか GitHub に確認します。あれば画面右下に通知が出て、クリックするだけで更新できます。確認するのはバージョン番号だけで、データは一切送信しません。設定でオフにもできます。ポータブル版は更新を確認しないので、新しいバージョンは [Releases](https://github.com/Warlock0805/sniplite/releases/latest) から入手してください。
 
 **アンインストールするには？**
 

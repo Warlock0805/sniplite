@@ -8,7 +8,7 @@
 
 [![English](https://img.shields.io/badge/English-eaeef2?style=flat-square)](../README.md) [![简体中文](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-1677e5?style=flat-square)](README.zh-CN.md) [![繁體中文](https://img.shields.io/badge/%E7%B9%81%E9%AB%94%E4%B8%AD%E6%96%87-eaeef2?style=flat-square)](README.zh-TW.md) [![日本語](https://img.shields.io/badge/%E6%97%A5%E6%9C%AC%E8%AA%9E-eaeef2?style=flat-square)](README.ja.md) [![한국어](https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-eaeef2?style=flat-square)](README.ko.md) [![Français](https://img.shields.io/badge/Fran%C3%A7ais-eaeef2?style=flat-square)](README.fr.md) [![Deutsch](https://img.shields.io/badge/Deutsch-eaeef2?style=flat-square)](README.de.md) [![Español](https://img.shields.io/badge/Espa%C3%B1ol-eaeef2?style=flat-square)](README.es.md)
 
-[![版本](https://img.shields.io/github/v/tag/MrTangLuyao/sniplite?sort=date&label=%E7%89%88%E6%9C%AC&style=flat-square&color=1677e5)](https://github.com/MrTangLuyao/sniplite/releases) [![系统](https://img.shields.io/badge/%E7%B3%BB%E7%BB%9F-Windows%2010%20%2F%2011-3b82f6?style=flat-square)](#下载) [![许可证](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF%E8%AF%81-MIT-3b82f6?style=flat-square)](../LICENSE)
+[![版本](https://img.shields.io/github/v/tag/Warlock0805/sniplite?sort=date&label=%E7%89%88%E6%9C%AC&style=flat-square&color=1677e5)](https://github.com/Warlock0805/sniplite/releases) [![系统](https://img.shields.io/badge/%E7%B3%BB%E7%BB%9F-Windows%2010%20%2F%2011-3b82f6?style=flat-square)](#下载) [![许可证](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF%E8%AF%81-MIT-3b82f6?style=flat-square)](../LICENSE)
 
 [**下载**](#下载) | [默认快捷键](#默认快捷键) | [常见问题](#常见问题)
 
@@ -33,7 +33,7 @@
 - 启动时恢复未关闭的贴图及其位置、缩放比例、透明度和收起状态。
 - 在 **首选项 → 贴图** 中设置快捷键、回收站容量、重启恢复，以及未选中和悬停时的显示效果。
 
-修改版可使用 MinGW-w64 运行 `build.bat` 构建。下方下载链接和程序内的更新检查指向 sniplite 原版发布页。
+修改版可使用 MinGW-w64 运行 `build.bat` 构建。安装包下载和软件更新使用本 fork 的 [Releases](https://github.com/Warlock0805/sniplite/releases)。可选 OCR 模块仍从原版的 OCR 发布页下载。
 
 ### 同步上游
 
@@ -52,7 +52,7 @@
 
 ## 下载
 
-到 [Releases](https://github.com/MrTangLuyao/sniplite/releases/latest) 下载最新版安装。
+到 [Releases](https://github.com/Warlock0805/sniplite/releases/latest) 下载最新版安装。
 
 也有两个免安装的便携版：`sniplite_<版本>_portable_x64.exe`，以及自带文字识别模块的 `sniplite_<版本>_portable_with_OCR_x64.exe`。
 
@@ -138,7 +138,7 @@
 
 **怎么更新？**
 
-软件每天会到 GitHub 看一眼有没有新版本，有的话右下角会提示，点一下就能更新。只查版本号，不上传任何数据，不想要可以在首选项里关掉。便携版不检查更新，需要新版本时到 [Releases](https://github.com/MrTangLuyao/sniplite/releases/latest) 重新下载。
+软件每天会到 GitHub 看一眼有没有新版本，有的话右下角会提示，点一下就能更新。只查版本号，不上传任何数据，不想要可以在首选项里关掉。便携版不检查更新，需要新版本时到 [Releases](https://github.com/Warlock0805/sniplite/releases/latest) 重新下载。
 
 **怎么卸载？**
 

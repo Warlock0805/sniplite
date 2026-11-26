@@ -8,7 +8,7 @@
 
 [![English](https://img.shields.io/badge/English-eaeef2?style=flat-square)](../README.md) [![简体中文](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-eaeef2?style=flat-square)](README.zh-CN.md) [![繁體中文](https://img.shields.io/badge/%E7%B9%81%E9%AB%94%E4%B8%AD%E6%96%87-eaeef2?style=flat-square)](README.zh-TW.md) [![日本語](https://img.shields.io/badge/%E6%97%A5%E6%9C%AC%E8%AA%9E-eaeef2?style=flat-square)](README.ja.md) [![한국어](https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-1677e5?style=flat-square)](README.ko.md) [![Français](https://img.shields.io/badge/Fran%C3%A7ais-eaeef2?style=flat-square)](README.fr.md) [![Deutsch](https://img.shields.io/badge/Deutsch-eaeef2?style=flat-square)](README.de.md) [![Español](https://img.shields.io/badge/Espa%C3%B1ol-eaeef2?style=flat-square)](README.es.md)
 
-[![버전](https://img.shields.io/github/v/tag/MrTangLuyao/sniplite?sort=date&label=%EB%B2%84%EC%A0%84&style=flat-square&color=1677e5)](https://github.com/MrTangLuyao/sniplite/releases) [![시스템](https://img.shields.io/badge/%EC%8B%9C%EC%8A%A4%ED%85%9C-Windows%2010%20%2F%2011-3b82f6?style=flat-square)](#다운로드) [![라이선스](https://img.shields.io/badge/%EB%9D%BC%EC%9D%B4%EC%84%A0%EC%8A%A4-MIT-3b82f6?style=flat-square)](../LICENSE)
+[![버전](https://img.shields.io/github/v/tag/Warlock0805/sniplite?sort=date&label=%EB%B2%84%EC%A0%84&style=flat-square&color=1677e5)](https://github.com/Warlock0805/sniplite/releases) [![시스템](https://img.shields.io/badge/%EC%8B%9C%EC%8A%A4%ED%85%9C-Windows%2010%20%2F%2011-3b82f6?style=flat-square)](#다운로드) [![라이선스](https://img.shields.io/badge/%EB%9D%BC%EC%9D%B4%EC%84%A0%EC%8A%A4-MIT-3b82f6?style=flat-square)](../LICENSE)
 
 [**다운로드**](#다운로드) | [기본 단축키](#기본-단축키) | [자주 묻는 질문](#자주-묻는-질문)
 
@@ -35,7 +35,7 @@
 
 ## 다운로드
 
-[Releases](https://github.com/MrTangLuyao/sniplite/releases/latest)에서 최신 설치 파일을 받으세요.
+[Releases](https://github.com/Warlock0805/sniplite/releases/latest)에서 최신 설치 파일을 받으세요.
 
 설치가 필요 없는 포터블 버전도 두 가지 있습니다. `sniplite_<버전>_portable_x64.exe` 와 텍스트 인식 모듈을 포함한 `sniplite_<버전>_portable_with_OCR_x64.exe` 입니다.
 
@@ -117,7 +117,7 @@ Ctrl+S로 여는 저장 대화 상자는 마지막으로 저장한 폴더에서 
 
 **업데이트는 어떻게 하나요?**
 
-하루에 한 번 GitHub에 새 버전이 있는지 확인합니다. 있으면 화면 오른쪽 아래에 알림이 뜨고, 한 번 클릭하면 업데이트됩니다. 버전 번호만 확인하며 데이터는 보내지 않습니다. 설정에서 끌 수 있습니다. 포터블 버전은 업데이트를 확인하지 않으니 새 버전은 [Releases](https://github.com/MrTangLuyao/sniplite/releases/latest)에서 받으세요.
+하루에 한 번 GitHub에 새 버전이 있는지 확인합니다. 있으면 화면 오른쪽 아래에 알림이 뜨고, 한 번 클릭하면 업데이트됩니다. 버전 번호만 확인하며 데이터는 보내지 않습니다. 설정에서 끌 수 있습니다. 포터블 버전은 업데이트를 확인하지 않으니 새 버전은 [Releases](https://github.com/Warlock0805/sniplite/releases/latest)에서 받으세요.
 
 **제거는 어떻게 하나요?**
 

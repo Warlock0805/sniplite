@@ -7,8 +7,8 @@
  *                                                    RapidOCR converted them
  *   NOTICE.txt and the licenses                      whose work these are
  *
- * They travel as one zip (pack.bat makes it). Settings downloads it from this project's
- * own releases, where it is published once under a tag of its own; the portable program
+ * They travel as one zip (pack.bat makes it). Settings downloads it from upstream sniplite's
+ * OCR release, where it is published once under a tag of its own; the portable program
  * with OCR has it after itself in its own file. Either way the same code takes it apart:
  * each of the seven that are not text is checked against the SHA-256 written below before
  * it gets its name, so what is installed is exactly what this version of the program was
@@ -21,7 +21,7 @@
 
 /* The published zip. Its size is known here: for the progress, and nothing else is taken.
  * A changed module is published under a new tag, with both sizes and the hashes below. */
-#define MODULE_TAG UPDATE_REPO L"/releases/download/ocr-2/"
+#define MODULE_TAG L"/MrTangLuyao/sniplite/releases/download/ocr-2/"
 #define MODULE_PATH MODULE_TAG L"sniplite_ocr.zip"
 #define MODULE_BYTES 11985367u
 /* Beside it, the runtime files by themselves: for a module from before they came with it. */
